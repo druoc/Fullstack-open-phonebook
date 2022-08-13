@@ -7,15 +7,21 @@ const App = () => {
   //variables/state
   const [persons, setPersons] = useState([
     { id: 1,
-      name: 'Dave Dev'
+      name: 'Dave Dev',
+      number: '555-2542'
        }
   ]);
 
   const [newName, setNewName] = useState('new name');
+  const [newNumber, setNewNumber] = useState('new number')
 
   //functions
   const handleNewName = (event) => {
     setNewName(event.target.value);
+  };
+
+  const handleNewNumber = (event) => {
+    setNewNumber(event.target.value);
   };
 
   const addPerson = (event) => {
@@ -23,13 +29,16 @@ const App = () => {
     const personObject = {
       id: persons.length + 1,
       name: newName,
-    }
+      number: newNumber
+    };
+
     //checks if what we are trying to add to newName already exists
     if (persons.some(person => person.name === newName)) {
       alert (`${newName} has already been added to phonebook`)
     } else {
       setPersons(persons.concat(personObject));
       setNewName('');
+      setNewNumber('');
     };    
   };
 
@@ -41,6 +50,11 @@ const App = () => {
           Name: <input 
           value={newName}
           onChange={handleNewName} />
+          <br />
+          Number: <input 
+          value={newNumber}
+          onChange={handleNewNumber}
+          />
         </div>
         <div>
           <button type="submit">Add</button>
@@ -50,7 +64,9 @@ const App = () => {
       <div>
       <ul>
         {persons.map(person => 
-         <Person key={person.id} personName={person.name}/> )}
+         <Person key={person.id} 
+         personName={person.name} 
+         personNumber={person.number} /> )}
       </ul>
       </div>
     </div>
