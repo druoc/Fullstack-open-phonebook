@@ -1,19 +1,28 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import Person from './components/Person';
+import Input from './components/Input';
+import Filter from './components/Filter';
 
 const App = () => {
 
   //variables/state
-  const [persons, setPersons] = useState([
-    { id: 1,
-      name: 'Dave Dev',
-      number: '555-2542'
-       }
-  ]);
-
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('new name');
-  const [newNumber, setNewNumber] = useState('new number')
+  const [newNumber, setNewNumber] = useState('new number');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  //using the useEffect hook with axios to grab data from the db and set it to the 'persons' varibale
+useEffect(() => {
+  axios.get('http://localhost:3001/persons')
+  .then(response => {
+    setPersons(response.data)
+  })
+}, []);
+  
+  const personsToShow = searchQuery.length === 0 ? persons : persons.filter(
+    person => person.name.search(searchQuery >= 0));
 
   //functions
   const handleNewName = (event) => {
@@ -22,6 +31,10 @@ const App = () => {
 
   const handleNewNumber = (event) => {
     setNewNumber(event.target.value);
+  };
+
+  const handleNewSearch = (event) => {
+    setSearchQuery(event.target.value);
   };
 
   const addPerson = (event) => {
@@ -42,19 +55,26 @@ const App = () => {
     };    
   };
 
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <Filter func={handleNewSearch} />
+
       <form onSubmit={addPerson}>
         <div>
-          Name: <input 
-          value={newName}
-          onChange={handleNewName} />
-          <br />
-          Number: <input 
-          value={newNumber}
-          onChange={handleNewNumber}
-          />
+          <h2>Add a new person</h2>
+          <Input 
+          inputName="Name" 
+          value={newName} 
+          func={handleNewName}/ >
+
+          <Input 
+          inputName="Number" 
+          value={newNumber} 
+          func={handleNewNumber} />
+          
+  
         </div>
         <div>
           <button type="submit">Add</button>
@@ -63,10 +83,12 @@ const App = () => {
       <h2>Numbers</h2>
       <div>
       <ul>
-        {persons.map(person => 
+      
+      {persons.map(person => 
          <Person key={person.id} 
          personName={person.name} 
          personNumber={person.number} /> )}
+        
       </ul>
       </div>
     </div>
